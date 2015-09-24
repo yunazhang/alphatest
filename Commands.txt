@@ -1,0 +1,18 @@
+export BCOS="$HOME/Bitbucket/BayesianCalibration_OpenStudio_V1.0”
+
+#Demo 1: Uncertainty Analysis 
+# Change the export path according to the local file system
+export RUBYPATH="$BCOS/UncertaintyAnalysis/Code"
+ruby -S UA.rb  --osmName SEB_NREL_1.6.0.osm --epwName 2012AMY_Golden_CO.epw --numLHS 4 --runInteractively Yes
+
+#Demo 2: Sensitivity Analysis
+export RUBYPATH="$BCOS/SensitivityAnalysis/Code:$RUBYPATH"
+ruby -S SA.rb --osmName SEB_NREL_1.6.0.osm --epwName 2012AMY_Golden_CO.epw --runInteractively Yes
+
+#Demo 3.1: Run OpenStudio simulations as data points to build a Gaussian process emulator of OpenStudio model
+export RUBYPATH="$BCOS/PreRunsCalibration/Code:$RUBYPATH"
+ruby -S PreRuns_Calibration.rb --osmName SEB_NREL_1.6.0.osm --epwName 2012AMY_Golden_CO.epw --numLHS 40 --uqTable UQ_SEB_NREL_1.6.0.csv --utilityData UtilityElecAndGas.csv
+
+#Demo 3.2: Bayesian Calibration
+export RUBYPATH="$BCOS/BayesianCalibration/Code:$RUBYPATH"
+ruby -S Bayesian_Calibration.rb --numMCMCSteps 10 --numOutputVars 2 --numWeatherVars 2 --burnin 5 --osmName myBuilding.osm  --epwName Weather_USA_PA_Willow.Grove.NAS.724086_TMY3.epw
